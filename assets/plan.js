@@ -1,0 +1,23 @@
+(() => {
+const f=document.querySelector('#backup-form');if(!f)return;
+const title=document.querySelector('#plan-title'),summary=document.querySelector('#plan-summary'),steps=document.querySelector('#plan-steps'),copyBtn=document.querySelector('#copy-plan'),downloadBtn=document.querySelector('#download-plan');let plain='';
+const deviceMap={laptop:'computer',iphone:'iPhone or iPad',android:'Android phone',mixed:'devices and shared files'};
+function add(h,t){const box=document.createElement('article');const strong=document.createElement('strong');strong.textContent=h;const p=document.createElement('p');p.textContent=t;box.append(strong,p);steps.append(box);}
+function build(e){e.preventDefault();steps.replaceChildren();const fd=new FormData(f);const device=fd.get('device')||'laptop',data=fd.getAll('data'),copies=fd.getAll('copy'),change=fd.get('change-rate')||'daily',test=document.querySelector('#last-test').value;const dataLabel={photos:'photos and videos',documents:'documents',projects:'creative or work projects',appdata:'app data and settings'};let lines=[];const addstep=(h,t)=>{add(h,t);lines.push(h+'\n'+t);};
+const things=data.map(x=>dataLabel[x]).join(', ')||'the files you personally consider irreplaceable';const cadence=change==='daily'?'Set a daily or more frequent versioned backup for files that change most days.':change==='weekly'?'Run at least a weekly backup, and make an extra copy after important changes.':'Back up after major events or changes, and check the status monthly.';
+const noIndependent=!copies.includes('external')&&!copies.includes('offline');const noCloud=!copies.includes('cloud');
+const gaps=[noIndependent?'no confirmed independent device or offline copy':null,noCloud?'no cloud or off-site destination indicated':null,!copies.includes('versioned')?'version history not yet confirmed':null,test!=='recent'?'no recent restore test recorded':null].filter(Boolean);
+title.textContent=gaps.length?'A few protection gaps to close.':'A useful foundation—verify the details.';
+summary.textContent=`For your ${deviceMap[device]}, prioritize ${things}. ${gaps.length?'Main items to check: '+gaps.join('; ')+'.':'You have described multiple layers; confirm they are independent and recoverable.'}`;
+addstep('1 — Protect the right data',`Inventory ${things}. Find app-specific libraries and confirm which items your chosen backup methods include.`);
+addstep('2 — Choose two recoverable copies',noIndependent?'Add an external or independently accessible copy. Prefer a destination not permanently exposed to the primary device.':'Confirm the backup drive or offline copy contains real recoverable files and can be opened separately from the original device.');
+addstep('3 — Reduce shared access risk',noCloud?'Consider a secure off-site or cloud copy after reviewing privacy, account and retention terms. Keep independent account recovery options.':'Check the actual cloud account, version retention and deletion behavior; a sync folder is not automatically a full independent backup.');
+addstep('4 — Set a repeatable schedule',cadence);
+addstep('5 — Prove an old file opens',test==='recent'?'Repeat a harmless restore test after major account, device or storage changes.':'Restore a harmless test file into a separate folder and open it. Do not overwrite your only working original.');
+addstep('6 — Protect access',`Consider encryption for sensitive data, and store recovery information securely outside the destination it unlocks. Verify your account sign-in on another device.`);
+plain='BACKUPHARBOR — PERSONAL BACKUP PLAN\nGenerated in browser. Educational only; no files inspected.\n\nSetup: '+deviceMap[device]+'\nCritical data: '+things+'\n\n'+lines.join('\n\n')+'\n\nIMPORTANT: Verify the real backup and restore a sample file. Do not store credentials in exported notes.\nhttps://backupharbor.site/guides/test-a-restore.html';
+copyBtn.disabled=false;downloadBtn.disabled=false;
+}
+function dl(text,name){const b=new Blob([text],{type:'text/plain;charset=utf-8'});const u=URL.createObjectURL(b),a=document.createElement('a');a.href=u;a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),1000);}
+f.addEventListener('submit',build);copyBtn.addEventListener('click',async()=>{if(!plain)return;try{await navigator.clipboard.writeText(plain);copyBtn.textContent='Copied ✓';setTimeout(()=>copyBtn.textContent='Copy plan',1900);}catch{copyBtn.textContent='Copy unavailable — download instead';}});downloadBtn.addEventListener('click',()=>{if(plain)dl(plain,'backupharbor-backup-plan.txt');});
+})();
