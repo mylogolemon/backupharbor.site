@@ -1,3 +1,0 @@
-BackupHarbor disposable sample
-Version: 2
-Amount: 250

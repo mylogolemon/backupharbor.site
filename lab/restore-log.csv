@@ -1,1 +1,0 @@
-test_date,backup_source,snapshot_date,restore_destination,expected_version,opened_ok,hash_match,elapsed_minutes,status,next_action
