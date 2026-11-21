@@ -1,0 +1,6 @@
+(() => {
+  const m=document.querySelector('#menu-button'); const nav=document.querySelector('#main-nav');
+  if(m&&nav){m.addEventListener('click',()=>{const on=nav.classList.toggle('open');m.setAttribute('aria-expanded',String(on));});nav.querySelectorAll('a').forEach(x=>x.addEventListener('click',()=>{nav.classList.remove('open');m.setAttribute('aria-expanded','false');}));}
+  const buttons=[...document.querySelectorAll('[data-filter]')],items=[...document.querySelectorAll('.filter-item')],q=document.querySelector('#guide-search'),count=document.querySelector('#filter-count'),empty=document.querySelector('#empty-guides');
+  if(buttons.length&&items.length){let active='all';function refresh(){const term=(q?.value||'').toLowerCase().trim();let visible=0;items.forEach(el=>{const matches=(active==='all'||el.dataset.category===active)&&(!term||(el.dataset.title||'').toLowerCase().includes(term));el.hidden=!matches;if(matches)visible++;});if(count)count.textContent=`Showing ${visible} of ${items.length} guides.`;if(empty)empty.hidden=visible>0;}buttons.forEach(btn=>btn.addEventListener('click',()=>{active=btn.dataset.filter||'all';buttons.forEach(b=>{const yes=b===btn;b.classList.toggle('selected',yes);b.setAttribute('aria-pressed',String(yes));});refresh();}));q?.addEventListener('input',refresh);refresh();}
+})();

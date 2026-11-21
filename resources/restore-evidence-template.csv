@@ -1,0 +1,2 @@
+data_category,sample_description,backup_source,backup_completed_at,restore_test_date,restored_version,opened_correctly,additional_checks,result,next_action
+Example photographs,Disposable sample photo,External backup drive,YYYY-MM-DD HH:MM,YYYY-MM-DD,Expected sample,Yes,Compare with original and review date,Illustration only,Replace this row with your own non-sensitive notes
